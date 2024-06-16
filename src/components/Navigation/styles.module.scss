@@ -1,0 +1,28 @@
+.nav-item {
+    @apply box-border p-3;
+}
+
+.hrLine {
+    @apply absolute top-3 transition ease-in-out duration-500;
+}
+
+.divItem {
+    position: relative;
+    &:hover {
+      .active {
+      + hr {
+        width: 0; // Expand the <hr> width when the link is active
+       }
+      }
+      .not-active {
+        &:hover {
+          color: whitesmoke;
+          background-color: gray;
+        }
+        + hr {
+          opacity: 1;
+          width: 100%; // Expand the <hr> width when the link is active
+        }
+      }
+    }
+}

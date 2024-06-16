@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input::-ms-reveal,
+input::-ms-clear {
+    display: block;
+}
+
+.active {
+    @apply text-gray-500;
+}
+
+// nav {
+//     a:not(.active):hover {
+//         color: whitesmoke;
+//         background-color: gray;
+//     }
+// }
