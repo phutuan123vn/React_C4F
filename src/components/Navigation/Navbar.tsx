@@ -8,6 +8,8 @@ import logo from "@assets/logo.png";
 import Account from "@/pages/Account/Account";
 import SingIn from "@/pages/Account/SignIn";
 import SignUp from "@/pages/Account/SignUp";
+import BlogChat from "../BlogChat/BlogChat";
+import Blog from "../Blog/Blog";
 
 interface NavItemProps {
   children: React.ReactNode;
@@ -66,7 +68,10 @@ export default function NavBar() {
         </div>
       </nav>
       <Routes>
-        <Route index path="/" element={<Home />} />
+        <Route path="/" element={<Home />}>
+            <Route index path="" element={<Blog />} />
+            <Route path="blog/chat" element={<BlogChat />} />
+        </Route>
         <Route path="/about" element={<About />} />
         <Route path="/account" element={<Account />}>
           <Route path="sign-in" element={<SingIn />} />
