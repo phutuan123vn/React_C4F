@@ -1,18 +1,16 @@
-import { UserContext } from "./components/Context/UserContext"
-import NavBar from './components/Navigation/Navbar';
+import NavBar from "./components/Navigation/Navbar";
+import AuthUserProvider from "./components/Context/AuthUser";
+import RouteApp from "./Routes/RouteApp";
 
 function App() {
-
   return (
     <>
-      {/* <UserContext.Provider value={{ token: null}}> */}
+      <AuthUserProvider>
         <NavBar />
-      {/* </UserContext.Provider> */}
-      {/* <div>
-        Hello World
-      </div> */}
+        <RouteApp />
+      </AuthUserProvider>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

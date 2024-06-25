@@ -1,15 +1,9 @@
-import { Link, NavLink, Route, Routes } from "react-router-dom";
-import Home from "@pages/Home/Home";
-import About from "@pages/About";
-// import { useUserContext } from "../Context/UserContext";
+import { Link, NavLink} from "react-router-dom";
+import useUserContext from "../Context/UserContext";
 import styles from "./styles.module.scss";
 import { FaHome } from "react-icons/fa";
 import logo from "@assets/logo.png";
-import Account from "@/pages/Account/Account";
-import SingIn from "@/pages/Account/SignIn";
-import SignUp from "@/pages/Account/SignUp";
-import BlogChat from "../BlogChat/BlogChat";
-import Blog from "../Blog/Blog";
+
 
 interface NavItemProps {
   children: React.ReactNode;
@@ -41,7 +35,7 @@ const NavItem = ({ children, ...props }: NavItemProps) => {
 }
 
 export default function NavBar() {
-  // const user = useUserContext();
+  const { user } = useUserContext();
   return (
     <>
       <nav className="text-3xl h-20 flex justify-between bg-slate-700">
@@ -54,30 +48,29 @@ export default function NavBar() {
           </NavItem>
           <NavItem to="/about">About</NavItem>
         </div>
-        <div className="items-center text-lg flex justify-end space-x-10 mr-8">
-          <Link to={`/account/sign-in`} className={`w-fit p-4 text-gray-300 `}>
-            Sign In
-          </Link>
-          <Link
-            to={`/account/sign-up`}
-            className={`w-fit px-4 py-2 text-gray-300 rounded-2xl border-zinc-300 border-2
+        {user ? (
+          <div className="text-lg space-x-10 mr-8">
+            {/* <NavItem to="/account/profile">Profile</NavItem> */}
+            <NavItem to="/account/sign-out">Sign Out</NavItem>
+          </div>
+        ) : (
+          <div className="items-center text-lg flex justify-end space-x-10 mr-8">
+            <Link
+              to={`/account/sign-in`}
+              className={`w-fit p-4 text-gray-300 `}
+            >
+              Sign In
+            </Link>
+            <Link
+              to={`/account/sign-up`}
+              className={`w-fit px-4 py-2 text-gray-300 rounded-2xl border-zinc-300 border-2
             hover:bg-gray-200 hover:text-slate-900`}
-          >
-            Sign Up
-          </Link>
-        </div>
+            >
+              Sign Up
+            </Link>
+          </div>
+        )}
       </nav>
-      <Routes>
-        <Route path="/" element={<Home />}>
-            <Route index path="" element={<Blog />} />
-            <Route path="blog/chat" element={<BlogChat />} />
-        </Route>
-        <Route path="/about" element={<About />} />
-        <Route path="/account" element={<Account />}>
-          <Route path="sign-in" element={<SingIn />} />
-          <Route path="sign-up" element={<SignUp />} />
-        </Route>
-      </Routes>
     </>
   );
 }

@@ -1,16 +1,19 @@
-import { createContext, useContext } from "react"
+import { useContext, createContext } from "react"
 
-interface IUserContext {
-    token: string | null
+export interface IUserContext {
+    user: Record<string,string> | null,
+    setUser: (user: Record<string,string> | null) => void,
+    token: string | null,
+    setToken: (token: string | null) => void,
+    API_URL: string
 }
 
 export const UserContext = createContext<IUserContext | undefined>(undefined)
 
-export function useUserContext() {
+export default function useUserContext() {
     const UserToken = useContext(UserContext)
     if (UserToken === undefined) {
         throw new Error('useUserContext must be used within a UserProvider')
     }
     return UserToken
 }
-

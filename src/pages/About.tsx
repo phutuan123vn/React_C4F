@@ -1,15 +1,14 @@
+import useUserContext from "@/components/Context/UserContext"
+import { Navigate, useLocation } from "react-router-dom"
 
 
 export default function About() {
-    // const user = useUserContext();
-    // console.log('About:', user)
-    // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     user.token = e.target.value;
-    // }
-    return (
-        <div>
-            <h1>About</h1>
-            <p>This is the about page</p>
-        </div>
-    )
+    const context = useUserContext()
+    // console.log(context)
+    const location = useLocation()
+    return context.user ? (
+      <h1>About</h1>
+    ) : (
+      <Navigate to={"/account/sign-in"} state={{ from: location }} replace />
+    );
 }
