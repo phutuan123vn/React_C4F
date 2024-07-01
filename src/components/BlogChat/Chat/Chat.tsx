@@ -1,3 +1,10 @@
+
+export interface ChatProps {
+  value: string;
+  date: string;
+  usernmae: string;
+}
+
 export default function Chat() {
     return (
       <>

@@ -14,15 +14,15 @@ export default function SingIn() {
   // });
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // const data = await axiosPost(
-    //   "/api/login/",
-    //   {
-    //     username,
-    //     password,
-    //   },
-    //   context
-    // );
-    // context.setUser(data.user);
+    const data = await axiosPost(
+      "/api/login/",
+      {
+        username,
+        password,
+      },
+      context
+    );
+    context.setUser(data.user);
   };
 
   return context.user ? (

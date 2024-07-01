@@ -10,7 +10,7 @@ export interface BlogItemProps {
 }
 
 export default function BlogItem(props: BlogItemProps) {
-  console.log("props", props);
+  // console.log("props", props);
   return (
     <>
       <Link to={`/blog/${props.slug}`}>

@@ -1,11 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import useUserContext from "@/components/Context/UserContext";
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { redirect, useNavigate, useParams } from "react-router-dom";
 import styles from "./style.module.scss";
 import { axiosGet } from "@/components/APIs/AxiosInstance";
 import { MdThumbUpAlt } from "react-icons/md";
-import assert from "assert";
 
 interface BlogDetailProps {
   id: number;
@@ -14,32 +13,47 @@ interface BlogDetailProps {
   username: string;
   level: string[];
   liked: boolean;
-  comments: Record<string, any>[]
+  likes: number;
+  created_at: string;
 }
+
+interface IComment {
+  id: number;
+  username: string;
+  comment: string;
+  created_at: string;
+}
+
+interface CommentProps {
+  next: string | null;
+  previous: string | null;
+  results: Array<IComment>;
+}
+
+
 
 export default function BlogDetail() {
     // const [comment, setComment] = useState<string>("");
-    const [blogDetail, setBlogDetail] = useState<any>(null);
+    const [comments,setComments] = useState<CommentProps>({next:null,previous:null,results:[]} as CommentProps);
+    const [blogDetail, setBlogDetail] = useState<BlogDetailProps>();
+    const [likedBlog,setLikedBlog] = useState<boolean>(false);
     const navigate = useNavigate();
     const commentRef = useRef<HTMLInputElement>(null);
-    let {slug} = useParams();
+    const {slug} = useParams();
     const context = useUserContext();
     useEffect(() => {
         axiosGet(`/api/blog/${slug}/`, context)
           .then((res) => {
-            const {blog} = res;
-            const {likes, comments} = res;
-            assert(
-              typeof blog === "object" &&
-                typeof likes === "number" &&
-                Array.isArray(comments)
-            );
-            const blogDetails: BlogDetailProps = {
+            const {blog,liked,comments} = res
+            const blogDetail: BlogDetailProps = {
               ...blog,
-              likes,
-              comments,
-            };
-            setBlogDetail(blogDetails);
+            }
+            console.log(blogDetail);
+            setLikedBlog(liked);
+            setBlogDetail(blogDetail);
+            console.log(comments)
+            console.log(typeof comments)
+            setComments(comments);
           })
           .catch((err) => {
             console.log(err);
@@ -65,7 +79,9 @@ export default function BlogDetail() {
             console.log(comment);
         }
     }
-    console.log(blogDetail);
+    const handleLiked = () => {
+      setLikedBlog(!likedBlog);
+    }
     return (
       blogDetail && (
         <div className="container relative mx-auto mt-3 bg-slate-100 rounded-lg px-4 py-4">
@@ -73,10 +89,10 @@ export default function BlogDetail() {
             <h1 className="font-serif text-3xl">{blogDetail.title}</h1>
             <div className="flex justify-between">
               <span>{blogDetail.username}</span>
-              <h5 className="italic">Created at:</h5>
+              <h5 className="italic">Created at: {blogDetail.created_at}</h5>
             </div>
-            <h3>{blogDetail.level}</h3>
-            <h2>{blogDetail.description}</h2>
+            <h3>Level: {blogDetail.level}</h3>
+            <h2>Description: {blogDetail.description}</h2>
             <p className="text-2xl text-balance px-4 py-3">
               Lorem ipsum dolor sit amet consectetur adipisicing elit.
               Consectetur a dolore reiciendis, sint, perspiciatis minima
@@ -120,8 +136,14 @@ export default function BlogDetail() {
           <div
             className={`${styles["div-send-comment"]} flex gap-3 py-4 items-center border-2 rounded-lg px-2 text-xl backdrop-blur-md shadow-md`}
           >
-            <button className="hover:scale-125 transition ease-in-out active:rotate-12">
-              <MdThumbUpAlt size={40} className="text-cyan-400" />
+            <button
+              className="hover:scale-125 transition ease-in-out transform active:rotate-12"
+              onClick={handleLiked}
+            >
+              <MdThumbUpAlt
+                size={40}
+                className={likedBlog ? "text-cyan-400" : ""}
+              />
             </button>
             <label htmlFor="value">Comment:</label>
             <input
@@ -137,15 +159,28 @@ export default function BlogDetail() {
               Send
             </button>
           </div>
-          <div
-            className={`absolute px-4 w-full right-0 rounded-lg pt-2 ${styles["blog-comment"]}`}
-          >
-            <h3 className="italic">Comments</h3>
-            <div className="flex gap-3 w-full rounded-lg border-2 px-4 py-1 bg-zinc-400 ">
-              <h4>Author: </h4>
-              <p>Comment</p>
+          {comments && (
+            <div
+              className={`absolute px-4 w-full right-0 rounded-lg pt-2 overflow-y-auto ${styles["blog-comment"]}`}
+            >
+              <h3 className="italic">Comments</h3>
+              {comments.results.map((comment: IComment) => (
+                <div
+                  key={comment.id}
+                  className={`bg-slate-200 rounded-lg px-4 py-2 my-2 ${styles["comment"]}`}
+                >
+                  <h4>{comment.username}</h4>
+                  <p>{comment.comment}</p>
+                  <h5>{comment.created_at}</h5>
+                </div>
+                // <div className="flex gap-3 w-full rounded-lg border-2 px-4 py-1 bg-zinc-400 ">
+                //   <h4>{comment.username}: </h4>
+                //   <p>{comment.comment}</p>
+                // </div>
+                // {comment}
+              ))}
             </div>
-          </div>
+          )}
         </div>
       )
     );
