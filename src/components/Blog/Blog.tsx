@@ -1,33 +1,46 @@
-import img from "@assets/logo.png";
+import { useEffect, useState } from "react";
 import SideBar from "../SideBar/SideBar";
 import styles from "./Blog.module.scss";
+import BlogItem, { BlogItemProps } from "./BlogItem/BlogItem";
+import { axiosGet } from "../APIs/AxiosInstance";
+import useUserContext from "../Context/UserContext";
+
 export default function Blog() {
+  const userContext = useUserContext();
+  const [loading, setLoading] = useState(true)
+  const [blogItems, setBlogItems] = useState<BlogItemProps[]>([])
+  useEffect(() => {
+    axiosGet("/api/blog/", userContext)
+      .then((res) => {
+        setBlogItems(res.results)
+        console.log(blogItems);
+        setLoading(false)
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  },[])
     return (
-      <div className={`grid grid-cols-12 gap-1 ${styles['viewHeight']}`}>
-        <div className="col-span-2 text-xl bg-gray-500">
-          <SideBar />
-        </div>
-        <div className="col-span-10 bg-slate-200">
-          <div className="grid grid-cols-3">
-            <div className="bg-white rounded-md overflow-hidden shadow-md ml-2 my-2 w-fit hover:scale-105">
-              <div className="text-3xl px-3">
-                <h1>Header</h1>
-              </div>
-              <div className="text-xl px-3">
-                <img
-                  src={`${img}`}
-                  alt="img"
-                  className="bg-cover w-full h-56 py-2"
+      <>
+        <div className={`grid grid-cols-12 gap-1 ${styles["viewHeight"]}`}>
+          <div className="col-span-2 text-xl bg-gray-500">
+            <SideBar />
+          </div>
+          <div className="col-span-10 grid grid-cols-10 gap-3 bg-slate-200">
+            {/* <BlogItem /> */}
+            {!loading ? blogItems.map((blog) => (
+              <div className="col-span-3 w-max mx-auto">
+                <BlogItem
+                  key={blog.id}
+                  title={blog.title}
+                  description={blog.description}
+                  slug={blog.slug}
+                  username={blog.username}
                 />
-                <span>Description</span>
               </div>
-              <div className="bg-slate-500 text-xl">
-                {/* Footer */}
-                <h5 className="px-3 text-slate-100">Author</h5>
-              </div>
-            </div>
+            )): <h1>Loading...</h1>}
           </div>
         </div>
-      </div>
+      </>
     );
 }

@@ -17,3 +17,11 @@ export default function useUserContext() {
     }
     return UserToken
 }
+
+export function getToken() {
+    const UserToken = useContext(UserContext)
+    if (UserToken === undefined) {
+        throw new Error('getToken must be used within a UserProvider')
+    }
+    return UserToken.token
+}

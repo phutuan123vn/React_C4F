@@ -7,6 +7,8 @@ import Home from "@pages/Home/Home";
 import About from "@pages/About";
 import { Routes, Route } from "react-router-dom";
 import SignOut from "@/pages/Account/SignOut";
+import BlogDetail from "@/components/Blog/BlogDetail/BlogDetail";
+import BlogCreate from "@/components/Blog/BlogCreate/BlogCreate";
 
 export default function RouteApp() {
   return (
@@ -15,6 +17,8 @@ export default function RouteApp() {
         <Route path="/" element={<Home />}>
           <Route index path="" element={<Blog />} />
           <Route path="blog/chat" element={<BlogChat />} />
+          <Route path="blog/create" element={<BlogCreate />} />
+          <Route path="blog/:slug" element={<BlogDetail />} />
         </Route>
         <Route path="/about" element={<About />} />
         <Route path="/account" element={<Account />}>
