@@ -52,10 +52,10 @@ export async function axiosPost(url: string, data: Record<string, string>,contex
   return dataResponse;
 }
 
-export async function axiosGet(url: string, context: IUserContext) {
-  let dataResponse: IAPIResponse = {};
+export async function axiosGet<T extends IAPIResponse = IAPIResponse>(url: string, context: IUserContext, abortController?: AbortController) : Promise<T> {
+  let dataResponse: T = {} as T;
   try {
-    const res = await Axios.get<IAPIResponse>(context.API_URL + url);
+    const res = await Axios.get<T>(context.API_URL + url, { signal: abortController?.signal });
     if (res === undefined) {
       throw new Error("No data returned from Server");
     }

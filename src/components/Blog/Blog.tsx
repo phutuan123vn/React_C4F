@@ -13,7 +13,6 @@ export default function Blog() {
     axiosGet("/api/blog/", userContext)
       .then((res) => {
         setBlogItems(res.results)
-        console.log(blogItems);
         setLoading(false)
       })
       .catch((error) => {
