@@ -7,18 +7,18 @@ export interface SocketIOClient {
   close: () => void;
 }
 
-export default function createSocketInstance(url: string, token:string) : SocketIOClient{
+export default function createSocketInstance(url: string, room:number) : SocketIOClient{
   const socket = io(url, {
     withCredentials: true,
-    auth: {
-      Authorization: `Bearer ${token}`,
-    },
     reconnectionAttempts: 3,
     reconnectionDelay: 1000,
+    transports: ["websocket"],
+    // upgrade: false,
   });
 
   socket.on("connect", () => {
     console.log("Connected to server");
+    socket.emit("join", "room_id_" + room);
   })
 
   socket.on("disconnect", () => {
@@ -30,6 +30,8 @@ export default function createSocketInstance(url: string, token:string) : Socket
       socket.on(event, callback);
     },
     emit: (event: string, data: any) => {
+      console.log("Emitting event: ", event, data)
+      // const {room, message} = data;
       socket.emit(event, data);
     },
     close: () => {

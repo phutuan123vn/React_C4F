@@ -45,14 +45,12 @@ export default function BlogChat() {
         if (res.room === null || res.chat === null) {
           throw new Error("Room and Chat is not null");
         }
-        const url = "http://localhost:8000/ws/chat/" + res.room.results[0].id + "/";
-        console.log(url)
+        const url = "http://localhost:8000/";
         setRoom(res.room);
         setChat(res.chat);
         setRoomActive(res.room.results[0].id);
-        const socket = createSocketInstance(url, context?.token || "");
-        socket.on("message",(data) => {
-          console.log("Message received");
+        const socket = createSocketInstance(url, res.room.results[0].id);
+        socket.on("message", function(data){
           console.log(data);
         })
         setSocket(socket);
@@ -70,6 +68,11 @@ export default function BlogChat() {
 
   }, []);
 
+  const handleRoomChange = (id: number) => {
+    socket?.emit("leave", "room_id_" + roomActive);
+    socket?.emit("join", "room_id_" + id);
+  };
+
   if (!context.user) {
     return (
       <Navigate
@@ -83,7 +86,8 @@ export default function BlogChat() {
       <div className="col-span-3 text-xl bg-gray-500 h-full container overflow-y-scroll">
         <h1 className="text-center">Your Room</h1>
         {/* <Contact /> */}
-        {room?.results && socket &&
+        {room?.results &&
+          socket &&
           room.results.map((contact, index) => (
             <Contact
               key={index}
@@ -91,14 +95,15 @@ export default function BlogChat() {
               name={contact.name}
               active={roomActive === contact.id}
               creator={contact.creator}
-              onClick={() => setRoomActive(contact.id)} // change socket
+              onClick={() => handleRoomChange(contact.id)} // change socket
             />
           ))}
       </div>
       <div className="col-span-9 bg-slate-200 h-2/3 container overflow-y-scroll">
         <div className="grid grid-rows-10 h-full">
           <div className="row-span-full">
-            {chat?.results && socket &&
+            {chat?.results &&
+              socket &&
               chat.results.map((chat, index) => (
                 <Chat
                   key={index}
@@ -115,9 +120,16 @@ export default function BlogChat() {
               className="border border-gray-400 rounded-md p-2 w-3/4"
               onChange={(e) => setMessage(e.target.value)}
             />
-            <button className="border border-gray-400 rounded-md p-2 ml-2" onClick={() => {
-              socket?.emit("message", { message: "Hello " + message })
-            }}>
+            <button
+              className="border border-gray-400 rounded-md p-2 ml-2"
+              onClick={() => {
+                if (message.trim() === "") return;
+                socket?.emit("message", {
+                  message: "Hello " + message,
+                  room: "room_id_" + roomActive,
+                });
+              }}
+            >
               Send
             </button>
           </div>
