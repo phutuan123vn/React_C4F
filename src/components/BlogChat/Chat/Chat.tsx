@@ -1,11 +1,12 @@
+import { memo } from "react";
 
 export interface ChatProps {
   value: string;
-  date: string;
+  // date: string;
   username: string;
 }
 
-export default function Chat(props: ChatProps) {
+function Chat(props: ChatProps) {
   return (
     <>
       <div className="grid grid-rows-1 w-3/4">
@@ -18,3 +19,5 @@ export default function Chat(props: ChatProps) {
     </>
   );
 }
+
+export default memo(Chat);
